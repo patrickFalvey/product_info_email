@@ -14,12 +14,7 @@ def product_info_email(request):
         ## Organize Product Info
         user = UserProfile.objects.get(user=request.user)
         product = Product.objects.get(id=request.GET.get('product_id'))
-        manu = product.manufacturer
-        model = product.model
-        caliber = product.caliber
-        length_barrel = product.length_barrel
-        length_overall = product.length_overall
-        picture = product.picture
+        
         try:
             margin = user.margin
         except:
@@ -31,30 +26,25 @@ def product_info_email(request):
         to_email = [form.cleaned_data['Customer_email']]       
         subject = '%s - %s' % (product.model, product.manufacturer) 
         text_content = render_to_string('saas_app/email/product_info_email.txt')
-        html_content = render_to_string('saas_app/email/product_info_email.html', context)
-        msg = EmailMultiAlternatives(
-            subject,
-            text_content,
-            [user.email],
-            to_email)
+        html_content = render_to_string('saas_app/email/product_info_email.html', {'text_content':text_content,
+                                                                                   'product':product,
+                                                                                   'price':price})
+        msg = EmailMultiAlternatives(subject,
+                                     text_content,
+                                     [user.email],
+                                     to_email)
+        
         msg.attach_alternative(html_content, 'text/html')
         msg.mixed_subtype = 'related'
         img_content_id = 'product'
         img_data = open(product.image_url(), 'rb')
         msg_img = MIMEImage(img_data.read())
         img_data.close()
-        msg_img.add_header('Content-ID', '<{}>'.format(picture))
+        msg_img.add_header('Content-ID', '<{}>'.format(product.picture))
         msg.attach(msg_img)
         msg.send()        
 
-    return render(request,'saas_app/email/product_info.html',{'caliber':caliber,
-                                                              'email_form':email_form,
-                                                              'length_barrel':length_barrel,
-                                                              'length_overall':length_overall,
-                                                              'manu':manu,
-                                                              'model':model,
-                                                              'picture':picture,
-                                                              'text_content':text_content})
+    return render(request,'saas_app/product-search-result.html',{'email_form':email_form,})
 
 
 
