@@ -1,13 +1,13 @@
 from django.core.mail import send_mail, EmailMultiAlternatives, EmailMessage
 from email.MIMEImage import MIMEImage
-from .forms import ProductInfoEmailForm
+from .forms import product_info_email_form
 
 
 
 @csrf_exempt
 def product_info_email(request):
     
-    email_form = ProductInfoEmailForm(request.POST or None)
+    email_form = product_info_email_form(request.POST or None)
     
     if form.is_valid():
 
