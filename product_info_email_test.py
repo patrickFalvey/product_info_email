@@ -44,7 +44,7 @@ def product_info_email(request):
         msg.attach(msg_img)
         msg.send()        
 
-    return render(request,'saas_app/product-search-result.html',{'email_form':email_form,})
+    return render(request,'saas_app/search-result.html',{'email_form':email_form,})
 
 
 
