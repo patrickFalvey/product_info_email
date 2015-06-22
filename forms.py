@@ -1,4 +1,4 @@
 from django import forms
 
-class product_info_email_form(forms.Form):
+class ProductInfoEmailForm(forms.Form):
     Customer_email = forms.EmailField()

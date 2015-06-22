@@ -1,34 +1,33 @@
 from django.core.mail import send_mail, EmailMultiAlternatives, EmailMessage
 from email.MIMEImage import MIMEImage
-from .forms import product_info_email_form
+from .forms import ProductInfoEmailForm
 
 
 
-@csrf_exempt
-def product_info_email(request):
+
+class ProductInfoEmail(FormView):
+    @method_decorator(csrf_exempt)
+    form_class = ProductInfoEmailForm
+    success_url = '/product-search/'
+    template_name = 'saas_app/search-result.html'
     
-    email_form = product_info_email_form(request.POST or None)
-    
-    if form.is_valid():
-
-        ## Organize Product Info
+    def form_valid(self, form):
         user = UserProfile.objects.get(user=request.user)
-        product = Product.objects.get(id=request.GET.get('product_id'))
-        
+        product = Product.objects.get(id=request.GET.get('product_id'))     
         try:
             margin = user.margin
         except:
             margin = 30.0
         price_increased = (product.price * margin) / 100.00
         price = product.price + price_increased
-
-        ## Create & Send Email
         to_email = [form.cleaned_data['Customer_email']]       
         subject = '%s - %s' % (product.model, product.manufacturer) 
         text_content = render_to_string('saas_app/email/product_info_email.txt')
-        html_content = render_to_string('saas_app/email/product_info_email.html', {'text_content':text_content,
-                                                                                   'product':product,
-                                                                                   'price':price})
+        html_content = render_to_string('saas_app/email/product_info_email.html',
+                                       {'text_content':text_content,
+                                        'price':price,
+                                        'product':product})
+        
         msg = EmailMultiAlternatives(subject,
                                      text_content,
                                      [user.email],
@@ -44,7 +43,7 @@ def product_info_email(request):
         msg.attach(msg_img)
         msg.send()        
 
-    return render(request,'saas_app/search-result.html',{'email_form':email_form,})
+    return super(Product_Info_Email, self).form_valid(form)
 
 
 
