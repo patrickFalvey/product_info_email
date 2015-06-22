@@ -43,7 +43,7 @@ class ProductInfoEmail(FormView):
         msg.attach(msg_img)
         msg.send()        
 
-    return super(Product_Info_Email, self).form_valid(form)
+    return super(ProductInfoEmail, self).form_valid(form)
 
 
 
