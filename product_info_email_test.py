@@ -1,6 +1,8 @@
 from django.core.mail import send_mail, EmailMultiAlternatives, EmailMessage
+from django.views.generic.edit import FormView
 from email.MIMEImage import MIMEImage
 from .forms import ProductInfoEmailForm
+
 
 
 
